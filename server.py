@@ -28,15 +28,20 @@ def bearer_oauth(r):
     r.headers["Authorization"] = f"Bearer {bearer_token}"
     r.headers["User-Agent"] = "v2SampledStreamPython"
     return r
-results = []
 
 def connect_to_endpoint(url):
     response = requests.request("GET", url, auth=bearer_oauth, stream=True)
-    print(response.status_code)
+    #print(response.status_code)
+    a_file = open("tweets.txt", "w")
+    tweets = []
     for response_line in response.iter_lines():
         if response_line:
             json_response = json.loads(response_line)
-            results.append(print(json.dumps(json_response, indent=4, sort_keys=True)))
+            if json_response["data"]["lang"] == "en":
+                time = str(json_response["data"]["created_at"][0:10]) + "-" + str(json_response["data"]["created_at"][11:19].replace(':','-'))
+                tweets.append(time + ", " + str(json_response["data"]["text"]))
+                value = "\n".join(tweets)
+                print(value, file = a_file)
     if response.status_code != 200:
         raise Exception(
             "Request returned an error: {} {}".format(
