@@ -42,20 +42,17 @@ def clean_text(text):
                             and (not token.lemma_ == "-PRON-")
                             and (not len(token) < 4)])
     return doc
-
+json_file = open("tweet_json_file.json", "w")
+results = []
 def connect_to_endpoint(url):
     response = requests.request("GET", url, auth=bearer_oauth, stream=True)
     #print(response.status_code)
-    a_file = open("tweets.txt", "w")
-    tweets = []
+
     for response_line in response.iter_lines():
         if response_line:
             json_response = json.loads(response_line)
-            if json_response["data"]["lang"] == "en":
-                time = str(json_response["data"]["created_at"][0:10]) + "-" + str(json_response["data"]["created_at"][11:19].replace(':','-'))
-                tweets.append(time + ", " + str(json_response["data"]["text"]))
-                value = "\n".join(tweets)
-                print(value, file = a_file)
+            results.append(json_response)
+            json_file.write(json.dumps(json_response, indent=4, sort_keys=True))
 
     if response.status_code != 200:
         raise Exception(
@@ -74,3 +71,17 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+    
+a_file = open("tweets.txt", "w")
+tweets = []
+for i in range(len(results)):
+    if results[i]["data"]["lang"] == "en":
+        time = str(results[i]["data"]["created_at"][0:10]) + "-" + str(results[i]["data"]["created_at"][11:19].replace(':','-'))
+        text = str(results[i]["data"]["text"])
+        text = clean_text(text)
+        tweet = time + ", " + text
+        tweets.append(tweet)
+value = "\n".join(tweets)
+print(value, file = a_file)
+a_file.close()
