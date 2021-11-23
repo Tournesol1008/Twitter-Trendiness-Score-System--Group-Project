@@ -29,6 +29,8 @@ def bearer_oauth(r):
     r.headers["User-Agent"] = "v2SampledStreamPython"
     return r
 
+json_file = open("tweet_json_file.json", "w")
+results = []
 def connect_to_endpoint(url):
     response = requests.request("GET", url, auth=bearer_oauth, stream=True)
     #print(response.status_code)
@@ -37,11 +39,8 @@ def connect_to_endpoint(url):
     for response_line in response.iter_lines():
         if response_line:
             json_response = json.loads(response_line)
-            if json_response["data"]["lang"] == "en":
-                time = str(json_response["data"]["created_at"][0:10]) + "-" + str(json_response["data"]["created_at"][11:19].replace(':','-'))
-                tweets.append(time + ", " + str(json_response["data"]["text"]))
-                value = "\n".join(tweets)
-                print(value, file = a_file)
+            results.append(json_response)
+            json_file.write(json.dumps(json_response, indent=4, sort_keys=True))
     if response.status_code != 200:
         raise Exception(
             "Request returned an error: {} {}".format(
@@ -83,23 +82,3 @@ def clean_text(text):
  
 
     return doc
-
-
-datelist = []
-for i in range(len(posts)):
-    datelist.append(posts[i][39:58])
-u_tweetlist = []
-for i in range(len(posts)):
-    u_tweetlist.append(posts[i][77:])
-tweetlist = []
-for i in range(len(u_tweetlist)):
-    tweetlist.append(clean_text(u_tweetlist[i]))
-tweets = []
-for i in range(len(tweetlist)):
-    tweets.append(str(datelist[i]) + ", " + str(tweetlist[i]))
-
-MyFile=open('tweets.txt','w')
-for element in tweets:
-     MyFile.write(element)
-     MyFile.write('\n')
-MyFile.close()
