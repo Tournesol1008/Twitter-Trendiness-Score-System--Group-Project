@@ -1,56 +1,47 @@
 #1.Read tweet.txt file
 from string import punctuation
-def process_file(dst): 
+
+def process_file(): 
     try: # open file and handle errors
-        f = open("tweets.txt", "r")
+        f = open("tweets.txt", "r",encoding='utf-8')
     except IOError as s:
         print(s)
         return None
     try: # read file and handle errors
-        bvffer = f.read()
+        readtws = f.read()
     except:
         print("Read File Error!")
         return None
-    f.close()
-    return bvffer
-
+    f.close()  
+    return readtws
+    
 #2.Processing the file，count the frequency of each words，and store them in word_freq
-def process_buffer(bvffer):
-    if bvffer:
+def process_tweets(readtws):
+    if readtws:
         word_freq = {}
         for i in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
-            bvffer = bvffer.replace(i, " ") # replace special characters
-            bvffer = bvffer.lower() # convert uppercase to lowercase
-            words = bvffer.split() # split string
+            readtws = readtws.replace(i, " ") # replace special characters
+            readtws = readtws.lower() # convert uppercase to lowercase
+            words = readtws.split() # split string
         for word in words:
             word_freq[word] = word_freq.get(word, 0) + 1
         return word_freq
 
-#3.sorting by frequency，and print out the results
-def output_result(word_freq):
-    if word_freq:
-        sorted_word_freq = sorted(word_freq.items(), key=lambda v: v[1], reverse=True)
-        for item in sorted_word_freq[:]:
-            print("%s %d " % (item[0], item[1]))
-
-#4.define main function for testing
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('dst')
-    args = parser.parse_args()
-    dst = args.dst
-    bvffer = process_file(dst)
-    word_freq = process_buffer(bvffer)
-    output_result(word_freq)
-    
-# 5. run the main function
-if __name__ == '__main__':
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('dst')
-    args = parser.parse_args()
-    dst = args.dst
-    bvffer = process_file(dst)
-    word_freq = process_buffer(bvffer)
-    output_result(word_freq)
-
+import argparse
+parser = argparse.ArgumentParser(description='Count word frequency')
+parser.add_argument('--word', help='Take as input a word or phrase')
+args = parser.parse_args() 
+        
+def outputs(word_freq):
+    if args.word in word_freq:
+        results = print('The word frequency is:', word_freq[args.word])
+        return results
+    else:
+        results1 = print('That word is not in sampled tweets.')
+        return results1
+        
+# run the main function
+if __name__ == '__main__':  
+    readtws = process_file()
+    word_freq = process_tweets(readtws)
+    results = outputs(word_freq)
