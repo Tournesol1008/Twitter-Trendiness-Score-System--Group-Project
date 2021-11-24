@@ -14,9 +14,20 @@ from word_count import * #use word_count to test
 #from vocabulary_size_postgres import *
 #run unique word file
 
+#Total number of phrases in the current minute
+def tot1():
+
+#Total number of phrases in the prior minute
+def tot2():
+
+#Probability of seeing the phrases in current/prior minute
+def Pro(f,v,t):
+	p = (1 + f) / (v + t)
+	
+
 #trendiness score
 import math
-def trend(f1, f2):
+def trend(p1, p2):
 	if args.word in word_freq:
 		tre = math.log10(f1) - math.log10(f2)
 		pr = print("The Trendness Score Is:", tre)
@@ -31,10 +42,18 @@ def trend(f1, f2):
 
 if __name__ == '__main__':  
     readtws = process_file()
-    word_freq = process_tweets(readtws)
-    for w in word_freq.values():
-    	word_f = w
-    volc_f = 20 #random number for testing
-    tre = trend(word_f,volc_f)
+    word_prob = process_tweets(readtws)
+    for w1 in word_prob.values():
+    	word_p = w1
+"""
+    prior_prob = process_tweets1(readtws)
+    for w1 in prior_prob.values():
+    	prior_p = w2
+"""	
+    w2 = 0.9 #random for testing
+    volc_p = 20 #random number for testing
+    word_pr = pro(w1,v1,t1)
+    volc_pr = pro(w2,v2,t2)
+    tre = trend(word_pr,volc_pr)
 
 
