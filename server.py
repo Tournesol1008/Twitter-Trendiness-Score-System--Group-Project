@@ -12,8 +12,6 @@ import pandas as pd
 import spacy
 import re
 import multiprocessing
-import time
-from datetime import datetime
 
 bearer_token = "AAAAAAAAAAAAAAAAAAAAAPvIUgEAAAAAYT52qKny6B4Kg%2FcLZxGDMP%2FCQ%2BM%3DaUQwwWeeBgOAgfRtNs36d0ymOLCwtVhzgdr1skzZX1Ge3ANYYu"
 
@@ -28,7 +26,6 @@ def bearer_oauth(r):
     r.headers["Authorization"] = f"Bearer {bearer_token}"
     r.headers["User-Agent"] = "v2SampledStreamPython"
     return r
-    
     
 nlp = spacy.load('en_core_web_sm', disable=['parser', 'ner'])
 
@@ -57,34 +54,51 @@ results = []
 tweets = []
 def connect_to_endpoint(url):
     response = requests.request("GET", url, auth=bearer_oauth, stream=True)
-    #print(response.status_code)
-    for response_line in response.iter_lines():
-        if response_line:
-            json_response = json.loads(response_line)
-            results.append(json_response)
-            json_file.write(json.dumps(json_response, indent=4, sort_keys=True))
-            if json_response["data"]["lang"] == "en":
-                time = str(json_response["data"]["created_at"][0:10]) + "-" + str(json_response["data"]["created_at"][11:19].replace(':','-'))
-                text = str(json_response["data"]["text"])
-                text = clean_text(text)
-                tweet = time + ", " + text
-                tweets.append(tweet)
-                a_file.write(tweet + "\n")
-    if response.status_code != 200:
-        raise Exception(
-            "Request returned an error: {} {}".format(
-                response.status_code, response.text, 
-            )
-        )
-
+    print(response.status_code)
+    print("Remaining rate limit: ", response.headers["x-rate-limit-remaining"])
+    if response.status_code == 200:        
+        for response_line in response.iter_lines():
+            if response_line:
+                json_response = json.loads(response_line)
+                results.append(json_response)
+                if json_response["data"]["lang"] == "en":
+                    json_file.write(json.dumps(json_response, indent=4, sort_keys=True))
+                    time = str(json_response["data"]["created_at"][0:10]) + "-" + str(json_response["data"]["created_at"][11:19].replace(':','-'))
+                    text = str(json_response["data"]["text"])
+                    text = clean_text(text)
+                    tweet = time + ", " + text
+                    tweets.append(tweet)
+                    a_file.write(tweet + "\n")
+    elif response.status_code == 429:       
+        import time
+        from datetime import datetime
+        reset_time = response.headers["x-rate-limit-reset"]
+        reset_time = int(reset_time)
+        current_time = time.time()
+        remaining_time = reset_time - current_time
+        print("Reach rate limitation. Remaining time (seconds) to retry: ", remaining_time)
+        time.sleep(remaining_time)  
+    else:
+        raise HTTPError(
+			"Request returned an error: {} {}".format(
+			response.status_code, response.text, 
+		    )
+		)	    
 
 def main():
-    url = create_url()
-    timeout = 0
-    while True:
+    from requests.exceptions import ConnectionError,ReadTimeout,HTTPError,RequestException
+    try:
+        url = create_url()
         connect_to_endpoint(url)
-        timeout += 1
+    except HTTPError:
+        print('Http error')
+    except ConnectionError:
+        print('Connection Error')
+    except RequestException as e:
+        print('Other errors')
+        raise SystemExit(e)
 
 
 if __name__ == "__main__":
-    main()
+    main()   
+    
