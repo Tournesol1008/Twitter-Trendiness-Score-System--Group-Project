@@ -16,32 +16,25 @@ def process_file():
     return readtws
     
 #2.Processing the file，count the frequency of each words，and store them in word_freq
-def process_tweets(readtws):
+def process_tweets(readtws,phrase):  
     if readtws:
         word_freq = {}
         for i in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
             readtws = readtws.replace(i, " ") # replace special characters
             readtws = readtws.lower() # convert uppercase to lowercase
-            words = readtws.split() # split string
-        for word in words:
-            word_freq[word] = word_freq.get(word, 0) + 1
-        return word_freq
-
+        count = readtws.count(phrase)       
+        return count
+        
 import argparse
 parser = argparse.ArgumentParser(description='Count word frequency')
 parser.add_argument('--word', help='Take as input a word or phrase')
 args = parser.parse_args() 
         
-def outputs(word_freq):
-    if args.word in word_freq:
-        results = print('The word frequency is:', word_freq[args.word])
-        return results
-    else:
-        results1 = print('That word is not in sampled tweets.')
-        return results1
-        
 # run the main function
 if __name__ == '__main__':  
     readtws = process_file()
-    word_freq = process_tweets(readtws)
-    results = outputs(word_freq)
+    word_freq = process_tweets(readtws, args.word)
+    if word_freq == 0:
+        print('Not found')
+    else:
+        print('Frequency: %d' % word_freq)
