@@ -1,8 +1,4 @@
-CREATE SCHEMA milestone2
-SET search_path TO 'milestone2';
-CREATE TABLE IF NOT EXISTS Trendiness(
-   CreationDate timestamp NOT NULL,
-   Word varchar(255) NOT NULL,
-   WordNum integer NOT NULL,
-   TrendinessScore float NOT NULL);
-
+CREATE SCHEMA IF NOT EXISTS milestone2
+AUTHORIZATION gb760;
+set SCHEMA 'milestone2';
+CREATE DATABASE tweets_info;
