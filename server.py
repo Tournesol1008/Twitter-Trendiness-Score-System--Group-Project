@@ -48,11 +48,11 @@ def clean_text(text): #open the file
                             and (not len(token) < 4)])
     return doc
 
-json_file = open("tweet_json_file.json", "w")
+
 a_file = open("tweets.txt", "w")
-results = []
 tweets = []
 def connect_to_endpoint(url):
+    results = []
     response = requests.request("GET", url, auth=bearer_oauth, stream=True)
     print(response.status_code)
     print("Remaining rate limit: ", response.headers["x-rate-limit-remaining"])
@@ -60,9 +60,14 @@ def connect_to_endpoint(url):
         for response_line in response.iter_lines():
             if response_line:
                 json_response = json.loads(response_line)
-                results.append(json_response)
                 if json_response["data"]["lang"] == "en":
-                    json_file.write(json.dumps(json_response, indent=4, sort_keys=True))
+                    results.append(json_response["data"])
+#Dump results to tweet_json_file.json
+                    output_file = open("tweet_json_file.json", 'w')# encoding='utf-8')
+                    for dic in results:
+                        json.dump(dic, output_file) 
+                        output_file.write("\n")
+#Extract useful data from output_file and write formated data into tweets.txt                    
                     time = str(json_response["data"]["created_at"][0:10]) + "-" + str(json_response["data"]["created_at"][11:19].replace(':','-'))
                     text = str(json_response["data"]["text"])
                     text = clean_text(text)
@@ -83,7 +88,31 @@ def connect_to_endpoint(url):
 			"Request returned an error: {} {}".format(
 			response.status_code, response.text, 
 		    )
-		)	    
+		)
+			    
+def readtweets(filename):
+    tweetsList = []
+    #Reading JSON file which contains multiple JSON document
+    with open(filename) as f:
+        for jsonObj in f:
+            tweetsDict = json.loads(jsonObj)
+            tweetsList.append(tweetsDict)
+    #Printing each JSON Decoded Object
+    tweets=[]
+    output_file2 = open("tweets.txt", 'w', encoding='utf-8')
+    for i in range(len(tweetsList)):
+        time = str(tweetsList[i]['created_at'][0:10]+ "-" +tweetsList[i]["created_at"][11:19].replace(':','-'))
+        text = str(tweetsList[i]['text'])
+        text = clean_text(text)
+        tweets = time + ", " + text
+        json.dump(tweets, output_file2) 
+        output_file2.write("\n")
+
+
+import argparse
+parser = argparse.ArgumentParser(description='Read file or twitter API')
+parser.add_argument('--filename', help='Take as input a file')
+args = parser.parse_args() 
 
 def main():
     from requests.exceptions import ConnectionError,ReadTimeout,HTTPError,RequestException
@@ -98,7 +127,9 @@ def main():
         print('Other errors')
         raise SystemExit(e)
 
-
 if __name__ == "__main__":
-    main()   
+    if args.filename:
+        readtweets(args.filename)
+    else:
+        main()   
     
