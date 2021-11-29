@@ -1,29 +1,46 @@
 #1.Read tweet.txt file
 from string import punctuation
+import psycopg2
+import pandas as pd
 
-def process_file(): 
-    try: # open file and handle errors
-        f = open("tweets.txt", "r",encoding='utf-8')
-    except IOError as s:
-        print(s)
-        return None
-    try: # read file and handle errors
-        readtws = f.read()
-    except:
-        print("Read File Error!")
-        return None
-    f.close()  
-    return readtws
-    
-#2.Processing the file，count the frequency of each words，and store them in word_freq
-def process_tweets(readtws,phrase):  
-    if readtws:
-        word_freq = {}
-        for i in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
-            readtws = readtws.replace(i, " ") # replace special characters
-            readtws = readtws.lower() # convert uppercase to lowercase
-        count = readtws.count(phrase)       
-        return count
+#creating data table
+conn = psycopg2.connect("dbname=tweets_info user=gb760")
+cur = conn.cursor()
+conn.commit()
+
+cur.execute("SELECT * FROM Tweets_time_and_text")
+record = cur.fetchall()
+df = pd.DataFrame(record)
+cur_min = df.iloc[0,2]
+cur_sec = df.iloc[0,3]
+row_list = []
+for i in range(len(df)):
+    if cur_sec <= 30:
+        if df.iloc[i,3] >= cur_sec and df.iloc[i,3] <= cur_sec+29:
+            new_line = df.iloc[i]
+            row_list.append(new_line)
+        else:
+            pass
+    else:
+        if df.iloc[i,3] >= cur_sec and df.iloc[i,2] == cur_min:
+            new_line = df.iloc[i]
+            row_list.append(new_line)
+        elif df.iloc[i,3] <= cur_sec-31 and df.iloc[i,2] == cur_min+1 :
+            new_line = df.iloc[i]
+            row_list.append(new_line)
+        else:
+            pass
+new_df = pd.DataFrame(row_list)
+
+def process_tweets(new_df,phrase):  
+    text = ""
+    for m in range(len(new_df)):
+        text += new_df.iloc[m,4]
+    for i in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
+        text = text.replace(i, " ") # replace special characters
+        text = text.lower() # convert uppercase to lowercase
+    count = text.count(phrase)       
+    return count
         
 import argparse
 parser = argparse.ArgumentParser(description='Count word frequency')
@@ -32,9 +49,8 @@ args = parser.parse_args()
         
 # run the main function
 if __name__ == '__main__':  
-    readtws = process_file()
-    word_freq = process_tweets(readtws, args.word)
+    word_freq = process_tweets(new_df, args.word)
     if word_freq == 0:
         print('Not found')
     else:
-        print('Frequency: %d' % word_freq)
+        print('Current Time Frequency: %d' % word_freq)
