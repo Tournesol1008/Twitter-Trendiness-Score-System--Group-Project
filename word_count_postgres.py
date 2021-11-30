@@ -15,21 +15,11 @@ cur_min = df.iloc[0,2]
 cur_sec = df.iloc[0,3]
 row_list = []
 for i in range(len(df)):
-    if cur_sec <= 30:
-        if df.iloc[i,3] >= cur_sec and df.iloc[i,3] <= cur_sec+29:
-            new_line = df.iloc[i]
-            row_list.append(new_line)
-        else:
-            pass
+    if df.iloc[i,2] == cur_min and df.iloc[i,3] <= 59:
+        new_line = df.iloc[i]
+        row_list.append(new_line)
     else:
-        if df.iloc[i,3] >= cur_sec and df.iloc[i,2] == cur_min:
-            new_line = df.iloc[i]
-            row_list.append(new_line)
-        elif df.iloc[i,3] <= cur_sec-31 and df.iloc[i,2] == cur_min+1 :
-            new_line = df.iloc[i]
-            row_list.append(new_line)
-        else:
-            pass
+        pass
 new_df = pd.DataFrame(row_list)
 
 def process_tweets(new_df,phrase):  
