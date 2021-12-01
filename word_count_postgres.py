@@ -33,7 +33,7 @@ def process_tweets(new_df,phrase):
         text = text.lower() # convert uppercase to lowercase
     count = text.count(phrase)       
     return count
-print(new_df)
+#print(new_df)
         
 import argparse
 parser = argparse.ArgumentParser(description='Count word frequency')
