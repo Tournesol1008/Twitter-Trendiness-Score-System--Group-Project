@@ -46,15 +46,12 @@ def clean_text(text): #open the file
     return doc
 
 
-
-json_file = open("tweet_json_file.json", "w")
 a_file = open("tweets.txt", "w")
 results = []
 tweets = []
 #creating data table
-conn = psycopg2.connect("dbname=tweets_info user=gb760")
+conn = psycopg2.connect("dbname=gb760 user=gb760")
 cur = conn.cursor()
-cur.execute('CREATE TABLE Tweets_time_and_text ( CreationDate date, CreationHour smallint, CreationMinute smallint, CreationSeconds smallint, Text text);')
 
 def connect_to_endpoint(url):
     response = requests.request("GET", url, auth=bearer_oauth, stream=True)
@@ -62,9 +59,12 @@ def connect_to_endpoint(url):
     for response_line in response.iter_lines():
         if response_line:
             json_response = json.loads(response_line)
-            results.append(json_response)
-            json_file.write(json.dumps(json_response, indent=4, sort_keys=True))
             if json_response["data"]["lang"] == "en":
+                results.append(json_response["data"])
+                output_file = open("tweet_json_file.json","w")
+                for dic in results:
+                    json.dump(dic,output_file)
+                    output_file.write("\n")
                 time = str(json_response["data"]["created_at"][0:10]) + "-" + str(json_response["data"]["created_at"][11:19])
                 text = str(json_response["data"]["text"])
                 text = clean_text(text)
@@ -74,7 +74,7 @@ def connect_to_endpoint(url):
                 time_hour = time[11:13]
                 time_min = time[14:16]
                 time_sec = time[17:19]
-                cur.execute('INSERT INTO Tweets_time_and_text(CreationDate, CreationHour, CreationMinute, CreationSeconds, Text) VALUES (%s, %s, %s, %s, %s)', (time_date, time_hour, time_min, time_sec, text))
+                cur.execute('INSERT INTO Tweets_Table(CreationDate, CreationHour, CreationMinute, CreationSeconds, Text) VALUES (%s, %s, %s, %s, %s)', (time_date, time_hour, time_min, time_sec, text))
                 conn.commit()
                 a_file.write(tweet + "\n")
     if response.status_code != 200:
@@ -91,7 +91,43 @@ def main():
         connect_to_endpoint(url)
         timeout += 1
 
+def readtweets(filename):
+    tweetsList = []
+    with open(filename) as f:
+        for jsonObj in f:  #Load each object in the file to a list
+            #print(jsonObj)
+            try:
+                tweetsDict = json.loads(jsonObj)
+                tweetsList.append(tweetsDict)
+            except:
+                pass
+
+    #Format each JSON Decoded Object and write them to tweets.txt
+    for i in range(len(tweetsList)):
+        time = str(tweetsList[i]['created_at'][0:10]+ "-" +tweetsList[i]["created_at"][11:19].replace(':','-'))
+        text = str(tweetsList[i]['text'])
+        text = clean_text(text)
+        tweets = time + ", " + text
+        time_date = time[0:10]
+        time_hour = time[11:13]
+        time_min = time[14:16]
+        time_sec = time[17:19]
+        cur.execute('INSERT INTO Tweets_Table(CreationDate, CreationHour, CreationMinute, CreationSeconds, Text) VALUES (%s, %s, %s, %s, %s)', (time_date, time_hour, time_min, time_sec, text))
+        conn.commit()
+#json.dump(tweets, formated_file) 
+        a_file.write(tweets + "\n")
+
+
+import argparse
+parser = argparse.ArgumentParser(description='Read file or twitter API')
+parser.add_argument('--filename', help='Take as input a file')
+args = parser.parse_args() 
+
+
 
 if __name__ == "__main__":
-    main()
+    if args.filename:
+        readtweets(args.filename)
+    else:
+        main()
 
