@@ -1,4 +1,1 @@
-CREATE SCHEMA IF NOT EXISTS milestone2
-AUTHORIZATION gb760;
-set SCHEMA 'milestone2';
-CREATE DATABASE tweets_info;
+CREATE TABLE Tweets_Table ( CreationDate date, CreationHour smallint, CreationMinute smallint, CreationSeconds smallint, Text text);
