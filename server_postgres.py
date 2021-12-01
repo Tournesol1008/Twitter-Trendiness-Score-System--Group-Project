@@ -32,6 +32,7 @@ def clean_text(text): #open the file
     if type(text) != str:
         text = text.decode("utf-8")
     doc = re.sub(regex, '', text, flags=re.MULTILINE) # remove URLs
+    doc = re.sub('@[^\s]+','',text)
     sentences = []
     for sentence in doc.split("\n"):
         if len(sentence) == 0:
