@@ -48,7 +48,7 @@ def clean_text(text):
                             and (not len(token) < 4)])
     return doc
 
-#Open 'tweets.txt' to store formated time and tweets
+# Open 'tweets.txt' to store formated time and tweets
 formated_file = open("tweets.txt", "w", encoding='utf-8')
 tweets = []
 
@@ -97,17 +97,22 @@ def readtweets(filename):
     tweetsList = []
     #Reading JSON file which contains multiple JSON document
     with open(filename) as f:
-        for jsonObj in f: # Load each object in the file to a list
-            tweetsDict = json.loads(jsonObj)
-            tweetsList.append(tweetsDict)
-    # Format each JSON Decoded Object and dump them to tweets.txt
+        for jsonObj in f:  #Load each object in the file to a list
+            #print(jsonObj)
+            try:
+                tweetsDict = json.loads(jsonObj)
+                tweetsList.append(tweetsDict)
+            except:
+                pass
+                
+    #Format each JSON Decoded Object and dump them to tweets.txt
     for i in range(len(tweetsList)):
         time = str(tweetsList[i]['created_at'][0:10]+ "-" +tweetsList[i]["created_at"][11:19].replace(':','-'))
         text = str(tweetsList[i]['text'])
         text = clean_text(text)
         tweets = time + ", " + text
-        json.dump(tweets, formated_file) 
-        formated_file.write("\n")
+        #json.dump(tweets, formated_file) 
+        formated_file.write(tweets + "\n")
 
 
 import argparse
