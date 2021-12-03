@@ -1,13 +1,14 @@
 import psycopg2
 import connection
 import pandas as pd
+import re
 
 #read data from database tweets_info
-connection = psycopg2.connect(dbname="tweets_info", user="gb760")  
+connection = psycopg2.connect(dbname="gb760", user="gb760")  
 cursor = connection.cursor()
 connection.commit()
 # Fetch result
-cursor.execute("SELECT * from Tweets_time_and_text")
+cursor.execute("SELECT * from Tweets_Table")
 record = cursor.fetchall()
 df = pd.DataFrame(record)
 #print("Result ", df)
@@ -20,7 +21,9 @@ cur_m = df.iloc[0,2]
 cur_df = df.loc[df[2] == cur_m]
 cur_text = df[df.columns[4]]
 for i in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
-            cur_text = cur_text.replace(i, " ") 
+            cur_text = cur_text.replace(i, "") 
+cur_text = re.sub('[\.][\.][\.]', '', str(cur_text))
+cur_text = re.sub('\d+\s|\s\d+\s|\s\d+', '', str(cur_text))
 cur_text = str(cur_text)
 cur_text = set(cur_text.split())
 un = len(cur_text)
