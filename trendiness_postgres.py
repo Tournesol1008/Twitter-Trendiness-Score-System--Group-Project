@@ -11,7 +11,7 @@ import pandas as pd
 import connection
 
 #read data from database tweets_info
-connection = psycopg2.connect(dbname="tweets_info", user="gb760")  
+connection = psycopg2.connect(dbname="gb760", user="gb760")  
 cursor = connection.cursor()
 connection.commit()
 # Fetch result
@@ -34,10 +34,11 @@ for i in range(len(df)):
         pass
 cur_df = pd.DataFrame(cur_list)
 
-def process_c_tweets(c_df,phrase):  
+#count the number of a certain word in a dataframe
+def process_a_tweets(a_df,phrase):  
     text = ""
-    for m in range(len(c_df)):
-        text += c_df.iloc[m,4]
+    for m in range(len(a_df)):
+        text += a_df.iloc[m,4]
     for i in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
         text = text.replace(i, " ") # replace special characters
         text = text.lower() # convert uppercase to lowercase
@@ -53,73 +54,65 @@ for i in range(len(df)):
         pass
 pri_df = pd.DataFrame(pri_list)
 
-def process_p_tweets(p_df,phrase):  
-    text1 = ""
-    for n in range(len(p_df)):
-        text1 += p_df.iloc[n,4]
-    for i in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
-        text1 = text1.replace(i, " ") # replace special characters
-        text1 = text1.lower() # convert uppercase to lowercase
-    count = text1.count(phrase)       
-    return count
 
 cursor.close()
 connection.close()
 
 #total word in a dataframe
-def process_c_un(df3):
+def process_tt(df3):
 	text3 = ""
-    for i3 in range(len(df3)):
-        text3 += df3.iloc[n,4]
-    for j3 in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
-        text3 = text3.replace(i, " ") # replace special characters
-        text3 = text3.lower() # convert uppercase to lowercase
-    t3 = len(text3)     
-    return t3
+	for i3 in range(len(df3)):
+        	text3 += df3.iloc[i3,4]
+	for j3 in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
+        	text3 = text3.replace(j3, " ") # replace special characters
+        	text3 = text3.lower() # convert uppercase to lowercase
+	t3 = len(text3.split())     
+	return t3
 
 #unique word in the dataframe
-def process_c_un(df3):
+def process_un(df3):
 	text3 = ""
-    for i3 in range(len(df3)):
-        text3 += df3.iloc[n,4]
-    for j3 in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
-        text3 = text3.replace(i, " ") # replace special characters
-        text3 = text3.lower() # convert uppercase to lowercase
-    l3 = set(text3.split())
-    u3 = len(l3)     
-    return u3
+	for i3 in range(len(df3)):
+		text3 += df3.iloc[i3,4]
+	for j3 in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
+		text3 = text3.replace(j3, " ") # replace special characters
+		text3 = text3.lower() # convert uppercase to lowercase
+	l3 = set(text3.split())
+	u3 = len(l3)     
+	return u3
 
 
 
 #Probability of seeing the phrases in current/prior minute
 def Pro(f,v,t):
 	p = (1 + f) / (v + t)
+	return p
 	
 
 #trendiness score
 import math
 def trend(p1, p2):
-	if args.word in word_freq:
-		tre = math.log10(f1) - math.log10(f2)
-		pr = print("The Trendness Score Is:", tre)
-		return pr
-	else:
-        	res = print('That word is not in sampled tweets.')
-        	return res
-        
+	tre = math.log10(p1) - math.log10(p2)
+	return tre
+	
 
 
 # run the main function
 
 if __name__ == '__main__':  
 
-    word_f = process_c_tweets(c_)
-    for w1 in word_f.values():
-    	word_f = w1	
-    w2 = 0.9 #random for testing
-    volc_f = un 
-    word_pr = Pro(w1,volc_f,tot)
-    volc_pr = Pro(w2,word_f,tot2)
-    tre = trend(word_pr,volc_pr)
+    word_c = process_a_tweets(cur_df, args.word) #word freq current
+    word_p = process_a_tweets(pri_df, args.word) #word freq prior
+    un_c = process_un(cur_df) #unique word current minute
+    un_p = process_un(pri_df) #unique word prior minute
+    tt_c = process_tt(cur_df) #total word current
+    tt_p = process_tt(pri_df) #total word prior
+    prob_c = Pro(word_c,un_c,tt_c)
+    prob_p = Pro(word_p,un_p,tt_p)
+    tre = trend(prob_c,prob_p)
+    if word_c == 0:
+    	print('Not found')
+    else:
+    	print('Trendiness Score = ', tre)
 
 
