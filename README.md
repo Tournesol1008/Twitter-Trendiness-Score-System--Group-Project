@@ -17,3 +17,15 @@ Milestone 2 contains 6 files: SCHEMA.md, schema_postgres.sql, server_postgres.py
 Firstly, run the "schema_postgres.sql" to create a table named Tweets_Table, this table will be used to save our data read from twitter.<br /> 
 
 Then run the "server_postgres.py" to add tweet date and text content into the table we created previously. You can add specific file after "python server_postgres.py --filename example.json" to read from this file. The json file we created is named <mark>"tweet_json_file.json"</mark>. The default setting will read from Twitter API. After this, you can run <mark>"word_count_postgres.py"</mark> and <mark>"vocabulary_size_postgres.py"</mark> to compute word frequency and the unique words. You can use <mark>"trendiness_postgres.py"</mark> to compute the word's trendiness score at current time.
+
+## Milestone 3
+
+Milestone3 contains 3 files: server_to_kafka.py, server_from_kafka.py, and trendiness_kafka.py. <br />
+
+Firstly, run the "server_to_kafka.py" file to write tweets to a Kafka queue. Then run the "server_from_kafka.py" file to read tweets from Kafka, and save it into a data table. We will use the "trendiness_kafka.py" to compute the trendiness score of each input word. 
+
+Due to the environment set-up issue, even though we are able to run the server_to_kafka.py and server_from_kafka.py, we are not able to see the info from kafka from command line. 
+
+
+
+
