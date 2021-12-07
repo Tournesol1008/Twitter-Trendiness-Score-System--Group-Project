@@ -27,7 +27,6 @@ consumer = KafkaConsumer(
     
 conn = psycopg2.connect("dbname=gb760 user=gb760")
 cur = conn.cursor()
-cur.execute('CREATE TABLE Tweets_Table2 ( CreationDate date, CreationHour smallint, CreationMinute smallint, CreationSeconds smallint, Text text);')
 
 results = []
 tweets = []
@@ -53,7 +52,7 @@ def process_data():
             time_hour = time[11:13]
             time_min = time[14:16]
             time_sec = time[17:19]
-            cur.execute('INSERT INTO Tweets_Table2(CreationDate, CreationHour, CreationMinute, CreationSeconds, Text) VALUES (%s, %s, %s, %s, %s)', (time_date, time_hour, time_min, time_sec, text))
+            cur.execute('INSERT INTO Tweets_Table(CreationDate, CreationHour, CreationMinute, CreationSeconds, Text) VALUES (%s, %s, %s, %s, %s)', (time_date, time_hour, time_min, time_sec, text))
             conn.commit()
 
 
