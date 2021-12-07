@@ -8,6 +8,7 @@ import spacy
 import requests
 import re
 import multiprocessing
+import json
 from datetime import datetime
 
 producer = KafkaProducer(bootstrap_servers=['localhost:9092'], api_version=(0,11,5), value_serializer=lambda x:  
@@ -85,7 +86,7 @@ def main():
         connect_to_endpoint(url)
         timeout += 1
         
-ef readtweets(filename):
+def readtweets(filename):
     tweetsList = []
     with open(filename) as f:
         for jsonObj in f:  #Load each object in the file to a list
