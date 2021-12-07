@@ -37,11 +37,11 @@ def list_c(lis):
 	cur_hour = lis[1]
 	cur_min = lis[2]
 	for i in range(len(df)):
-	    if df.iloc[i,0] == cur_date and df.iloc[i,1] == cur_hour and df.iloc[i,2] == cur_min:
-		new_line = df.iloc[i]
-		cur_list.append(new_line)
-	    else:
-		pass
+		if df.iloc[i,0] == cur_date and df.iloc[i,1] == cur_hour and df.iloc[i,2] == cur_min:
+			new_line = df.iloc[i]
+			cur_list.append(new_line)
+		else:
+			pass
 	cur_df = pd.DataFrame(cur_list)
 	return cur_df
 
@@ -62,11 +62,11 @@ def list_p(lis2):
 	cur_hour = lis2[1]
 	cur_min = lis2[2]-1
 	for i in range(len(df)):
-	    if df.iloc[i,0] == cur_date and df.iloc[i,1] == cur_hour and df.iloc[i,2] == cur_min-1:
-		new_line1 = df.iloc[i]
-		pri_list.append(new_line1)
-	    else:
-		pass
+		if df.iloc[i,0] == cur_date and df.iloc[i,1] == cur_hour and df.iloc[i,2] == cur_min-1:
+			new_line1 = df.iloc[i]
+			pri_list.append(new_line1)
+		else:
+			pass
 	pri_df = pd.DataFrame(pri_list)
 	return pri_df
 
