@@ -14,7 +14,7 @@ connection = psycopg2.connect(dbname="gb760", user="gb760")
 cursor = connection.cursor()
 connection.commit()
 # Fetch result
-cursor.execute("SELECT * from Tweets_Table2") #to read data from the databse called tweets table 2, to be updated here
+cursor.execute("SELECT * from Tweets_Table") 
 record = cursor.fetchall()
 df = pd.DataFrame(record)
 cur_date = df.iloc[-1,0]
