@@ -17,18 +17,29 @@ connection.close()
 print("PostgreSQL connection was ran and closed")
 
 #read tweets in the current minute
-cur_m = df.iloc[0,2]
-cur_df = df.loc[df[2] == cur_m]
-cur_text = df[df.columns[4]]
-for i in '!"#$%&()*+-,-./:;<=>?@“”[\\]^_{|}~':
-            cur_text = cur_text.replace(i, "") 
-cur_text = re.sub('[\.][\.][\.]', '', str(cur_text))
-cur_text = re.sub('\d+\s|\s\d+\s|\s\d+', '', str(cur_text))
-cur_text = str(cur_text)
-cur_text = set(cur_text.split())
-un = len(cur_text)
+cur_m = df.iloc[-1,2]
+cur_df = df.loc[df[2] == cur_m, [4]]
+#cur_text = df[cur_df.columns[4]]
+#print(cur_df)
+
+
+
+count = 0
+cur_l = cur_df.values
+
+cur_l = re.sub('[\.][\.][\.]', '', str(cur_l))
+cur_l = re.sub('\d+\s|\s\d+\s|\s\d+', '', str(cur_l))
+
+for s in list(cur_l):
+	s = str(s)
+	s = set(s.split())
+	
+	un = len(s)
+	
+	count+=un
+
 print ("Unique Words in Current Minute Are:")
-print (cur_text)
-print("Number of Unique Words is:", un)
+print (cur_l)
+print("Number of Unique Words is:",count)
 #compute unique vocabulary from tweets contents
 
