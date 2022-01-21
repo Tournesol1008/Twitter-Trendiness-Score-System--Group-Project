@@ -1,10 +1,13 @@
 # Group5-760
 
-This is Group5's final project for GB760, which aims to build a system to continuously score phrases and words based on their "trendiness" on Twitter.
+This is Group5's final project for 2021 Fall Data Technology class, which aims to build a system to continuously score phrases and words based on their "trendiness" on Twitter. The project was be developed on a Linux (Ubuntu 20.04) Virtual Machine.  
 
-## Milestone 1
-
-Milestone 1 contains 6 files: server.py, tweet_json_file.json, tweets.txt, word_count.py, vocabulary_size.py, FAILURE.md.<br />
+## Milestone 1  
+  
+A. Read tweets from the Twitter API or from _tweet_json_file_(raw tweets generated from API), write cleaned tweets into _tweets.txt_;  
+B. Compute frequencies of words and phrases and store the python code in _word_count.py_;  
+C. Compute the number of unique words (i.e. the vocabulary size) (_vocabulary_size.py_）;  
+D. Document points of failure in server.py, implement code to warn and gracefully recover from such failures (_FAILURE.md_);  
 
 In order to run the code, first make sure you are in the right repository, then type in "<mark>python server.py</mark>", you can add filename after this code by adding "<mark>--filename example.json</mark>". For word_count.py specifically, you need to add "--word <word_or_phrase>" after "python word_count.py" in order to count the frequency of the word or phrases you are interested in.<br />
 
