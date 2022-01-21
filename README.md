@@ -1,6 +1,6 @@
-# Group5-760
+# Data Technology Final Project
 
-This is Group5's final project for 2021 Fall Data Technology class, which aims to build a system to continuously score phrases and words based on their "trendiness" on Twitter. The project was be developed on a Linux (Ubuntu 20.04) Virtual Machine.  
+This is Group5's final project for 2021 Fall Data Technology class, which aims to build a system (data lake, data warehouse and streaming message queue) to continuously score phrases and words based on their "trendiness" on Twitter. The project was be developed on a Linux (Ubuntu 20.04) Virtual Machine.  
 
 ## Milestone 1
 For this milestone, Our code simply read tweets from the Twitter API or a file and write them to a file on disk. You can think of this file on disk as a “data lake”. What we did are as follows:    
